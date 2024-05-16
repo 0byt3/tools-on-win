@@ -336,7 +336,9 @@ $mainBlock = {
       Remove-Variable -Name existingPackages -ErrorAction SilentlyContinue;
    }
 
-   Read-Host -Prompt "Press enter to exit script";
+   if (-not (pacman.exe -Q git 2>$null)) {
+      pacman.exe -S --noconfirm git
+   }
 }
 
 $tempScriptFile = "$env:TEMP\msys2-plus-tools.ps1";
