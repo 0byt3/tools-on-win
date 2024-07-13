@@ -339,6 +339,10 @@ $mainBlock = {
    if (-not (pacman.exe -Q git 2>$null)) {
       pacman.exe -S --noconfirm git
    }
+
+   if (-not (pacman.exe -Q coreutils 2>$null)) {
+      pacman.exe -S --noconfirm coreutils
+   }
 }
 
 $tempScriptFile = "$env:TEMP\msys2-plus-tools.ps1";
