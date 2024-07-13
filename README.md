@@ -1,4 +1,4 @@
-The repo contains variable powershell scripts for the purposes of an easy copy and paste way of getting various posix tools installed as well as PowerShell core and OpenSSH on Windows.
+The repo contains powershell scripts for the purposes of an easy copy and paste way of getting various posix tools installed as well as PowerShell core and OpenSSH on Windows.
 
 Unfortunately as new versions are release this repo will need to be updated to reference the downloads of the newer release(s).
 
