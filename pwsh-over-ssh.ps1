@@ -15,7 +15,7 @@ $FW_RULE_DISPLAY_NAME = "OpenSSH Server Access";
 $FW_RULE_NAME = "SSHd-In";
 $FW_RULE_DESCRIPTION = "Allow access to the OpenSSH server service.";
 
-$OPENSSH_USERS_GROUP = "OpenSSHUsers";
+$OPENSSH_USERS_GROUP = "opensshusers";
 $OPENSSH_USERS_GROUP_DESC = "Permit SSH to this computer";
 
 # $OPENSSH_URL = 'https://github.com/PowerShell/Win32-OpenSSH/releases/download/v9.5.0.0p1-Beta/OpenSSH-Win64-v9.5.0.0.msi';
@@ -267,7 +267,7 @@ if ($sshdExistingVer -lt $OPENSSH_VER -and $sshdExistingExe -and -not $canInstal
       Remove-Item -Path $sshdExistingExe.DirectoryName -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue;
       Write-Output "Ensuring that the existing OpenSSH directory is not in the PATH environment variable";
       RemoveFrom-PathEnv -Path "$($sshdExistingExe.DirectoryName)";
-      
+
       $sshdExistingExe = $null;
       Remove-Variable -Name sshdUnInstallScriptOut,sshdUnInstallScriptExit   -ErrorAction SilentlyContinue;
    } else {
@@ -332,7 +332,6 @@ $stdOut
    $sshdExePath = Get-CimInstance -ClassName Win32_Service -Filter "Name = 'sshd'" |
          Foreach-Object -Process { $_.PathName -replace '"',''; }
    AddTo-SystemPathEnv -Path "$(Split-Path -Path $sshdExePath -Parent)";
-   Remove-Variable -Name sshdExePath -ErrorAction SilentlyContinue;
 
    Remove-Variable -Name sshdInstallProc,sshdInstallStartProcArgs,stdErrPath,stdOutPath -ErrorAction SilentlyContinue;
 } else {
@@ -384,6 +383,23 @@ Write-Output "Ensuring inheritance on '$($adminAuthFile)' is disabled.";
 icacls.exe "$($adminAuthFile)" /inheritance:r /Q
 
 Remove-Variable -Name adminAuthFile -ErrorAction SilentlyContinue;
+
+# added this block in due to a change in newer openssh installer
+# at some point need to revamp the permissions commands
+$sshdExePath = Get-CimInstance -ClassName Win32_Service -Filter "Name = 'sshd'" |
+      Foreach-Object -Process { $_.PathName -replace '"',''; }
+$sshdDir = Split-Path -Path $sshdExePath -Parent;
+$sshdFixScripts = @();
+$sshdFixScripts += dir -Path $sshDir -Filter "Fix*FilePermissions*.ps1";
+if ($sshdFixScripts.Count -gt 0) {
+   Write-Output "Executing permission scripts from OpenSSH Win64";
+   $sshdFixScripts | Foreach-Object {
+      & $_.FullName
+   }
+}
+
+Remove-Variable -Name sshdExePath,sshdDir,sshdFixScripts -ErrorAction SilentlyContinue;
+# /block
 
 if (-not (Get-NetFirewallRule -Name "$($FW_RULE_NAME)" -ErrorAction SilentlyContinue)) {
    Write-Output "Adding Windows firewall rule";
@@ -602,10 +618,10 @@ foreach ($line in (Get-Content -Path "$($env:ProgramData)\ssh\sshd_config")) {
       if ($line -match '^[ \t]*AllowGroups') {
          $allowedGroups = @();
          $allowedGroups += ($line -replace "^[ \t]*AllowGroups[ \t]+") -split '[ \t]+';
-         if ($allowedGroups -notcontains 'Administrators') {
+         if ($allowedGroups -noticontains 'administrators') {
             $allowedGroups += "Administrators";
          }
-         if ($allowedGroups -notcontains "$($OPENSSH_USERS_GROUP)") {
+         if ($allowedGroups -inotcontains "$($OPENSSH_USERS_GROUP)") {
             $allowedGroups += $OPENSSH_USERS_GROUP;
          }
 
