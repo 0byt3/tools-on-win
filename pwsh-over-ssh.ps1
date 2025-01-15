@@ -410,17 +410,17 @@ if (-not (Get-NetFirewallRule -Name "$($FW_RULE_NAME)" -ErrorAction SilentlyCont
 
 #region Install Powershell Core
 
-$existingPwshExe = Get-PwshExeFile -All;
+$existingPwshExe = Get-PwshExeFile;
 $existingPwshApp = Get-CimInstance -ClassName Win32_Product -Filter "Name like 'PowerShell%'" |
       Select-Object -Property *,@{n='Ver';e={[Version]$_.Version}} |
       Sort-Object -Property Ver -Descending |
       Select-Object -First 1;
 
 if ($existingPwshExe -or $existingPwshApp) {
-   if ($existingPwshApp) {
-      $existingPwshVersion = $existingPwshApp.Ver;
-   } else {
+   if ($existingPwshExe) {
       $existingPwshVersion = $existingPwshExe.Version;
+   } else {
+      $existingPwshVersion = $existingPwshApp.Ver;
    }
 
    if ($existingPwshVersion -lt $PWSH_VER -and -not $UpgradePwsh) {
@@ -659,4 +659,6 @@ $encoding = New-Object System.Text.UTF8Encoding $False;
 Remove-Variable -Name encoding -ErrorAction SilentlyContinue;
 
 Restart-Service -Name sshd -ErrorAction Stop;
+Get-Service -Name ssh* | Set-Service -StartupType Automatic;
+Get-Service -Name ssh-agent | Restart-Service;
 #endregion
