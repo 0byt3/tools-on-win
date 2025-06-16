@@ -618,7 +618,7 @@ foreach ($line in (Get-Content -Path "$($env:ProgramData)\ssh\sshd_config")) {
       if ($line -match '^[ \t]*AllowGroups') {
          $allowedGroups = @();
          $allowedGroups += ($line -replace "^[ \t]*AllowGroups[ \t]+") -split '[ \t]+';
-         if ($allowedGroups -noticontains 'administrators') {
+         if ($allowedGroups -inotcontains 'administrators') {
             $allowedGroups += "Administrators";
          }
          if ($allowedGroups -inotcontains "$($OPENSSH_USERS_GROUP)") {
