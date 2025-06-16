@@ -21,9 +21,9 @@ $OPENSSH_USERS_GROUP_DESC = "Permit SSH to this computer";
 # $OPENSSH_URL = 'https://github.com/PowerShell/Win32-OpenSSH/releases/download/v9.5.0.0p1-Beta/OpenSSH-Win64-v9.5.0.0.msi';
 $OPENSSH_URL = 'https://github.com/PowerShell/Win32-OpenSSH/releases/download/v9.8.1.0p1-Preview/OpenSSH-Win64-v9.8.1.0.msi';
 $OPENSSH_VER = '9.8.1.0';
-# $PWSH_URL = 'https://github.com/PowerShell/PowerShell/releases/download/v7.4.1/PowerShell-7.4.1-win-x64.msi';
-$PWSH_URL = 'https://github.com/PowerShell/PowerShell/releases/download/v7.4.6/PowerShell-7.4.6-win-x64.msi';
-$PWSH_VER = [Version]'7.4.6.500';
+# $PWSH_URL = 'https://github.com/PowerShell/PowerShell/releases/download/v7.4.6/PowerShell-7.4.6-win-x64.msi';
+$PWSH_URL = 'https://github.com/PowerShell/PowerShell/releases/download/v7.5.1/PowerShell-7.5.1-win-x64.msi';
+$PWSH_VER = [Version]'7.5.1.0';
 
 Function AddTo-SystemPathEnv {
    param([String]$Path);
