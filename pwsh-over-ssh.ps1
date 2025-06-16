@@ -11,12 +11,12 @@ if (!([bool]([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsId
 
 #region definitions
 
-$FW_RULE_DISPLAY_NAME = "OpenSSH Server Access";
-$FW_RULE_NAME = "SSHd-In";
+$FW_RULE_DISPLAY_NAME = "OpenSSH SSH Server (sshd)";
+$FW_RULE_NAME = "OpenSSH-Server-In-TCP";
 $FW_RULE_DESCRIPTION = "Allow access to the OpenSSH server service.";
 
-$OPENSSH_USERS_GROUP = "opensshusers";
-$OPENSSH_USERS_GROUP_DESC = "Permit SSH to this computer";
+$OPENSSH_USERS_GROUP = "OpenSSH Users";
+$OPENSSH_USERS_GROUP_DESC = "Members of this group may connect to this computer using SSH.";
 
 # $OPENSSH_URL = 'https://github.com/PowerShell/Win32-OpenSSH/releases/download/v9.5.0.0p1-Beta/OpenSSH-Win64-v9.5.0.0.msi';
 $OPENSSH_URL = 'https://github.com/PowerShell/Win32-OpenSSH/releases/download/v9.8.1.0p1-Preview/OpenSSH-Win64-v9.8.1.0.msi';
@@ -621,8 +621,8 @@ foreach ($line in (Get-Content -Path "$($env:ProgramData)\ssh\sshd_config")) {
          if ($allowedGroups -inotcontains 'administrators') {
             $allowedGroups += "Administrators";
          }
-         if ($allowedGroups -inotcontains "$($OPENSSH_USERS_GROUP)") {
-            $allowedGroups += $OPENSSH_USERS_GROUP;
+         if ($allowedGroups -inotcontains "$($OPENSSH_USERS_GROUP.ToLower())") {
+            $allowedGroups += "`"$OPENSSH_USERS_GROUP.ToLower()`"";
          }
 
          $newSshdConfig += "AllowGroups $($allowedGroups -join ' ')";
