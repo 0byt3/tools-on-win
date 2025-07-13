@@ -85,7 +85,7 @@ Function Get-RandomChars {
 }
 
 
-Function Invoke-ParseSpaceSeparatedNames {
+Function Resolve-SpaceSeparatedNames {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
@@ -664,7 +664,7 @@ foreach ($line in (Get-Content -Path "$($env:ProgramData)\ssh\sshd_config")) {
 
         if ($line -match '^[ \t]*AllowGroups') {
             $allowedGroups = @();
-            $allowedGroups +=  ($line -replace "^[ \t]*AllowGroups[ \t]+") | Invoke-ParseSpaceSeparatedNames
+            $allowedGroups +=  ($line -replace "^[ \t]*AllowGroups[ \t]+") | Resolve-SpaceSeparatedNames
             if ($allowedGroups -inotcontains 'administrators') {
                 $allowedGroups += "administrators";
             }
